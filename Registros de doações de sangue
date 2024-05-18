@@ -1,0 +1,165 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class MAIN {
+    private static String FILE_PATH;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Informe o caminho e nome do arquivo CSV(Exemplo: C:\\\\CSV\\\\doacoes.csv):");
+        FILE_PATH = scanner.nextLine();
+
+        while (true) {
+            System.out.println("Selecione uma opção:");
+            System.out.println("1. Exibir conteúdo do arquivo");
+            System.out.println("2. Inserir nova doação");
+            System.out.println("3. Deletar doação por código");
+            System.out.println("0. Sair");
+
+            int opcao = scanner.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    exibirConteudoDoArquivo();
+                    break;
+                case 2:
+                    inserirNovaDoacao();
+                    break;
+                case 3:
+                    deletarDoacaoPorCodigo();
+                    break;
+                case 0:
+                    System.out.println("Programa encerrado.");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+
+    private static void exibirConteudoDoArquivo() {
+        try {
+        BufferedReader br = new BufferedReader(new FileReader(FILE_PATH));
+        String linha;
+
+        // Exibir rótulos
+        System.out.println("Código\tNome\tCPF\tData de Nascimento\tTipo Sanguíneo\tQuantidade de Sangue Doado");
+
+        while ((linha = br.readLine()) != null) {
+            // Verificar se a linha não está em branco antes de exibi-la
+            if (!linha.trim().isEmpty()) {
+                String[] campos = linha.split(",");
+                for (String campo : campos) {
+                    System.out.print(campo + "\t");
+                }
+                System.out.println();
+            }
+        }
+        br.close();
+    } catch (IOException e) {
+        System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+    }
+    }
+
+    private static void inserirNovaDoacao() {
+         try {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH, true));
+        Scanner scanner = new Scanner(System.in);
+
+        int codigo;
+        while (true) {
+            try {
+                System.out.println("Informe o código da doação:");
+                codigo = Integer.parseInt(scanner.nextLine());
+                if (codigo > 0) {
+                    break;
+                } else {
+                    System.out.println("Por favor, insira um número válido para o código.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor, insira um número válido para o código.");
+            }
+        }
+
+        System.out.println("Informe o nome do doador:");
+        String nome = scanner.next(); // Lê o nome sem espaços
+
+        System.out.println("Informe o CPF do doador:");
+        String cpf = scanner.next();
+
+        System.out.println("Informe a data de nascimento do doador (formato: YYYY-MM-DD):");
+        String dataNascimento = scanner.next();
+
+        System.out.println("Informe o tipo sanguíneo do doador:");
+        String tipoSanguineo = scanner.next();
+
+        int quantidadeSangue;
+        while (true) {
+            try {
+                System.out.println("Informe a quantidade de sangue doado (em ml):");
+                quantidadeSangue = scanner.nextInt();
+                scanner.nextLine(); // consome a quebra de linha
+                if (quantidadeSangue > 0) {
+                    break;
+                } else {
+                    System.out.println("Por favor, insira um número válido para a quantidade de sangue doado.");
+                }
+            } catch (java.util.InputMismatchException e) {
+                System.out.println("Por favor, insira um número válido para a quantidade de sangue doado.");
+                scanner.nextLine(); // consome a entrada inválida
+            }
+        }
+
+        String novaDoacao = String.format("%d,%s,%s,%s,%s,%d", codigo, nome, cpf, dataNascimento, tipoSanguineo, quantidadeSangue);
+
+        // Adiciona uma nova doação somente se o arquivo não estiver vazio
+        if (new File(FILE_PATH).length() != 0) {
+            bw.newLine(); // Adiciona uma nova linha apenas se o arquivo não estiver vazio
+        }
+
+        bw.write(novaDoacao);
+        bw.close();
+
+        System.out.println("Doação adicionada com sucesso.");
+    } catch (IOException e) {
+        System.out.println("Erro ao escrever no arquivo: " + e.getMessage());
+    }
+    }
+
+    private static void deletarDoacaoPorCodigo() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Informe o código da doação a ser deletada:");
+            int codigo = scanner.nextInt();
+
+            ArrayList<String> linhas = new ArrayList<>();
+            BufferedReader br = new BufferedReader(new FileReader(FILE_PATH));
+            String linha;
+
+            while ((linha = br.readLine()) != null) {
+                if (!linha.trim().isEmpty()) {
+                    String[] campos = linha.split(",");
+                    if (Integer.parseInt(campos[0]) != codigo) {
+                        linhas.add(linha);
+                    }
+                }
+            }
+            br.close();
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH));
+            for (String l : linhas) {
+                bw.write(l + "\n");
+            }
+            bw.close();
+
+            System.out.println("Doação deletada com sucesso.");
+        } catch (IOException e) {
+            System.out.println("Erro ao manipular o arquivo: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Erro ao converter número: " + e.getMessage());
+        }
+    }
+}
