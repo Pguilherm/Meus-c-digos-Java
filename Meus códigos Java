@@ -1,0 +1,87 @@
+
+package atividade1prgsis1;
+ 
+ 
+import java.util.Scanner;
+public class Atividade1prgsis1 {
+ 
+     
+   public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+ 
+        System.out.println("Digite o número de linhas da matriz A:");
+        int linhas1 = scanner.nextInt();
+ 
+        System.out.println("Digite o número de colunas da matriz A:");
+        int colunas1 = scanner.nextInt();
+ 
+        System.out.println("Digite o número de linhas da matriz B:");
+        int linhas2 = scanner.nextInt();
+ 
+        System.out.println("Digite o número de colunas da matriz B:");
+        int colunas2 = scanner.nextInt();
+ 
+        if (colunas1 != linhas2) {
+            System.out.println("As matrizes não podem ser multiplicadas. O número de colunas da matriz A deve ser igual ao número de linhas da matriz B.");
+            return;
+        }
+ 
+        int[][] matriz1 = new int[linhas1][colunas1];
+        int[][] matriz2 = new int[linhas2][colunas2];
+        int[][] resultado = new int[linhas1][colunas2];
+ 
+        System.out.println("Digite os elementos da matriz A:");
+ 
+        for (int i = 0; i < linhas1; i++) {
+            for (int j = 0; j < colunas1; j++) {
+                matriz1[i][j] = scanner.nextInt();
+            }
+        }
+ 
+        System.out.println("Digite os elementos da matriz B:");
+ 
+        for (int i = 0; i < linhas2; i++) {
+            for (int j = 0; j < colunas2; j++) {
+                matriz2[i][j] = scanner.nextInt();
+            }
+        }
+ 
+        // Multiplicação de matrizes
+        for (int i = 0; i < linhas1; i++) {
+            for (int j = 0; j < colunas2; j++) {
+                for (int k = 0; k < colunas1; k++) {
+                    resultado[i][j] += matriz1[i][k] * matriz2[k][j];
+                }
+            }
+        }
+ 
+        
+        // Exibindo a matriz A
+        System.out.println("Matriz A:");
+        for (int i = 0; i < linhas1; i++) {
+            for (int j = 0; j < colunas1; j++) {
+        System.out.print("A" + matriz1[i][j] + " ");
+            }
+        System.out.println();
+        }
+ 
+        // Exibindo a matriz B
+        System.out.println("\nMatriz B:");
+        for (int i = 0; i < linhas2; i++) {
+            for (int j = 0; j < colunas2; j++) {
+        System.out.print("B" + matriz2[i][j] + " ");
+            }
+        System.out.println();
+        }
+ 
+// Exibindo o resultado
+        System.out.println("\nMatriz A x Matriz B = Matriz C");
+ 
+        for (int i = 0; i < linhas1; i++) {
+            for (int j = 0; j < colunas2; j++) {
+        System.out.print("C" + resultado[i][j] + " ");
+            }
+        System.out.println();
+        }
+    }
+}
